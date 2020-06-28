@@ -1,0 +1,73 @@
+{
+    "log": {
+        "error": "./error.log",
+        "loglevel": "warning"
+    },
+    "inbounds": [{
+        "port": 12345,
+        "protocol": "dokodemo-door",
+        "sniffing": {
+          "enabled": true,
+          "destOverride": ["http", "tls"]
+        },
+        "settings": {
+            "network": "tcp",
+            "followRedirect": true
+        }
+    }],
+    "outbounds": [{
+        "protocol": "freedom",
+        "settings": {},
+        "tag": "direct",
+        "streamSettings": {
+            "sockopt": {
+              "mark": 255
+            }
+        }
+    }, {
+        "protocol": "blackhole",
+        "settings": {},
+        "tag": "reject",
+        "streamSettings": {
+            "sockopt": {
+              "mark": 255
+            }
+        }
+    }, {
+        "protocol": "vmess",
+        "tag": "proxy",
+        "settings": {
+            "vnext": [{
+              "address": "======",
+              "port": ======,
+              "users": [{
+                  "id": "======",
+                  "security": "none",
+                  "alterId" : 0
+              }]
+            }]
+        },
+        "streamSettings": {
+            "network" : "ws",
+            "security": "tls",
+            "wsSettings" : {
+                "path" : "======"
+            },
+            "sockopt": {
+              "mark": 255
+            }
+        }
+    }],
+    "routing": {
+        "domainStrategy": "IPOnDemand",
+        "rules": [{
+            "type": "field",
+            "ip" : ["geoip:cn", "geoip:private"],
+            "outboundTag": "direct"
+        }, {
+            "type": "field",
+            "network" : "tcp",
+            "outboundTag": "proxy"
+        }]
+    }
+}

@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+START=80
+STOP=20
+APP=v2ray
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+start() {
+  service_start /root/v2ray
+  /root/tproxy.sh start
+}
+
+stop() {
+  /root/tproxy.sh stop
+  service_stop /root/v2ray
+}
